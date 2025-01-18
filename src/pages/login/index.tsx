@@ -14,8 +14,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { API_END_POINT, loginSchema, loginType, URL_LINKS } from "@/constants";
 import { Link } from "react-router";
 import { axios, useMutation } from "@/lib";
+import { useAuth } from "@/context/Auth";
+import useForward from "@/hooks/useForward";
 
 export const SignInPage = () => {
+  useForward();
+  const { signin } = useAuth();
+
   const {
     register,
     formState: { errors },
@@ -36,7 +41,7 @@ export const SignInPage = () => {
       return await axios.post(API_END_POINT.SIGN_IN, getValues());
     },
     onSuccess(response) {
-      console.log("response", response);
+      signin(response.data);
     },
   });
 

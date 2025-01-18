@@ -5,11 +5,16 @@ import { BrowserRouter } from "react-router";
 
 import { ReactQueryLib } from "@/lib";
 import App from "./App";
+import { AuthProdiver } from "./context/Auth";
+import { Toaster } from "./components/ui/toaster";
 
 createRoot(document.getElementById("root")!).render(
   <ReactQueryLib>
     <BrowserRouter>
-      <App />
+      <AuthProdiver>
+        <App />
+        <Toaster />
+      </AuthProdiver>
     </BrowserRouter>
   </ReactQueryLib>
 );

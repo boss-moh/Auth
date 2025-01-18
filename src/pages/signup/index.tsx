@@ -19,8 +19,13 @@ import {
 } from "@/constants";
 import { Link } from "react-router";
 import { axios, useMutation } from "@/lib";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import useForward from "@/hooks/useForward";
 
 export const SignUpPage = () => {
+  useForward();
+  const { toast } = useToast();
   const {
     register,
     formState: { errors },
@@ -41,7 +46,15 @@ export const SignUpPage = () => {
       return await axios.post(API_END_POINT.SIGN_up, getValues());
     },
     onSuccess(response) {
-      console.log("response", response);
+      toast({
+        title: "Successful",
+        description: response.data.message,
+        action: (
+          <ToastAction altText="Go Sign In">
+            <Link to={URL_LINKS.SIGN_IN}> Go Sign In</Link>
+          </ToastAction>
+        ),
+      });
     },
   });
 
