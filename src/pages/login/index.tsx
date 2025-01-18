@@ -49,8 +49,10 @@ export const SignInPage = () => {
     if (isPending) return;
     mutate();
   };
+
+  // className="relative max-w-sm -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
   return (
-    <Card className="relative max-w-sm -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+    <Card>
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-center">
           Sign In
