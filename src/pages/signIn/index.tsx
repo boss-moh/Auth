@@ -1,5 +1,4 @@
 import {
-  Card,
   CardContent,
   CardFooter,
   CardHeader,
@@ -50,7 +49,7 @@ export const SignInPage = () => {
     mutate();
   };
   return (
-    <Card className="relative max-w-sm -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+    <>
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-center">
           Sign In
@@ -91,7 +90,7 @@ export const SignInPage = () => {
             <Button type="submit" className="w-full" disabled={isPending}>
               {isPending ? "Loading ... " : "Sign In"}
             </Button>
-            {isError && <p className="text-red-500">{error.message}</p>}
+            {isError && <p className="text-red-500">{error?.message}</p>}
             <div>
               <p className="text-sm text-gray-600">"Don't have an account?" </p>
               <Link to={URL_LINKS.SIGN_UP} className="font-bold ">
@@ -101,7 +100,7 @@ export const SignInPage = () => {
           </div>
         </CardFooter>
       </form>
-    </Card>
+    </>
   );
 };
 

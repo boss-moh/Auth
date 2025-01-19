@@ -11,7 +11,12 @@ export const AuthProdiver = ({ children }: childrenProps) => {
 };
 
 export const useAuth = () => {
-  const [{ auth = null }, setCookies, removeCookies] = useCookies(["auth"]);
+  const [{ auth = null }, setCookies, removeCookies] = useCookies<
+    "auth",
+    {
+      auth: sessionType | null;
+    }
+  >(["auth"]);
   const navigate = useNavigate();
 
   const signin = (session: sessionType) => {
@@ -22,6 +27,10 @@ export const useAuth = () => {
     removeCookies("auth");
     navigate(URL_LINKS.SIGN_IN);
   };
+  const updateRefersh = (accessToken: string, refreshToken: string) => {
+    setCookies("auth", { ...auth, accessToken, refreshToken });
+    navigate(URL_LINKS.SIGN_IN);
+  };
 
   const isItLogin = auth !== null;
 
@@ -30,5 +39,6 @@ export const useAuth = () => {
     signin,
     signout,
     isItLogin,
+    updateRefersh,
   };
 };
