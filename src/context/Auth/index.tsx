@@ -28,8 +28,14 @@ export const useAuth = () => {
     navigate(URL_LINKS.SIGN_IN);
   };
   const updateRefersh = (accessToken: string, refreshToken: string) => {
+    console.log("update refersh token in hook context", auth);
+    console.log(
+      "update refersh token in hook context",
+      accessToken,
+      "\n",
+      refreshToken
+    );
     setCookies("auth", { ...auth, accessToken, refreshToken });
-    navigate(URL_LINKS.SIGN_IN);
   };
 
   const isItLogin = auth !== null;
