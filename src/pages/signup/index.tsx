@@ -20,7 +20,7 @@ import { Link } from "react-router";
 import { axios, useMutation } from "@/lib";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
-import useForward from "@/hooks/useForward";
+import useForward from "@/layouts/ForwardLayout";
 
 export const SignUpPage = () => {
   useForward();

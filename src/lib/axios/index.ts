@@ -36,13 +36,12 @@ const axiosAuth = axiosLibaray.create({
 });
 
 export const useAxiosWithAuth = () => {
-  const { auth, isItLogin, updateRefersh } = useAuth();
+  const { auth, isItHasAuth, updateTokens } = useAuth();
   const refersh = useRefreshToken();
   useEffect(() => {
     const requestInterceptor = axiosAuth.interceptors.request.use(
       (config) => {
-        if (isItLogin && !config.headers["Authorization"]) {
-          console.log('request run ')
+        if (isItHasAuth && !config.headers["Authorization"]) {
           config.headers["Authorization"] = `Bearer ${auth?.accessToken}`;
         }
         return config;
@@ -64,20 +63,20 @@ export const useAxiosWithAuth = () => {
           try {
             originalRequest._retry = true;
             const result = await refersh();
-            
+
             if (result) {
-              updateRefersh(result.accessToken, result.refreshToken);
-              
+              updateTokens(result.accessToken, result.refreshToken);
+
               // Update the authorization header
               originalRequest.headers = {
                 ...originalRequest.headers,
-                Authorization: `Bearer ${result.accessToken}`
+                Authorization: `Bearer ${result.accessToken}`,
               };
-              
+
               // Retry the original request with new token
               return axiosAuth(originalRequest);
             }
-          } catch  {
+          } catch {
             // If refresh token fails, reject with original error
             return Promise.reject(error.response?.data);
           }
@@ -97,14 +96,14 @@ export const useAxiosWithAuth = () => {
 
 export function useRefreshToken() {
   const { auth } = useAuth();
-  
+
   const refresh = async () => {
     if (!auth?.refreshToken) {
-      throw new Error('No refresh token available');
+      throw new Error("No refresh token available");
     }
 
     try {
-      const response = await axios.post<null,tokensType>(
+      const response = await axios.post<null, tokensType>(
         API_END_POINT.REFERSH,
         { refreshToken: auth.refreshToken }
       );
@@ -114,7 +113,7 @@ export function useRefreshToken() {
         refreshToken: response.refreshToken,
       };
     } catch (error) {
-      console.error('Failed to refresh token:', error);
+      console.error("Failed to refresh token:", error);
       throw error;
     }
   };

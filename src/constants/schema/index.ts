@@ -1,8 +1,7 @@
 import { z } from "zod";
-
 const RULES = {
   email: z.string().email("This Should Be Email Like xxxxx@yyyy.zz"),
-  password: z.string().min(6, "The Password Should Strong"),
+  password: z.string().min(6, "The Password Should Has Length At Least 6 "),
   userName: z.string().min(6).max(25),
   fullName: z.string().min(6).max(25),
 };

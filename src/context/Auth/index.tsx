@@ -1,6 +1,5 @@
-import { childrenProps, sessionType, URL_LINKS } from "@/constants";
+import { childrenProps, sessionType } from "@/constants";
 import { CookiesProvider, useCookies } from "@/lib";
-import { useNavigate } from "react-router";
 
 type cookies = {
   auth: sessionType | null;
@@ -19,27 +18,24 @@ export const useAuth = () => {
     "auth",
     cookies
   >(["auth"]);
-  const navigate = useNavigate();
 
-  const signin = (session: sessionType) => {
+  const setAuth = (session: sessionType) => {
     setCookies("auth", session);
-    navigate(URL_LINKS.HOME);
   };
-  const signout = () => {
+  const removeAuth = () => {
     removeCookies("auth");
-    navigate(URL_LINKS.SIGN_IN);
   };
-  const updateRefersh = (accessToken: string, refreshToken: string) => {
+  const updateTokens = (accessToken: string, refreshToken: string) => {
     setCookies("auth", { ...auth, accessToken, refreshToken });
   };
 
-  const isItLogin = auth !== null;
+  const isItHasAuth = auth !== null;
 
   return {
     auth,
-    signin,
-    signout,
-    isItLogin,
-    updateRefersh,
+    setAuth,
+    removeAuth,
+    isItHasAuth,
+    updateTokens,
   };
 };

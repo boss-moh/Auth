@@ -1,17 +1,17 @@
-import { Button } from "@/components/ui/button";
 import {
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+  Button,
+} from "@/components";
 import { API_END_POINT, sessionType } from "@/constants";
 import { useAuth } from "@/context/Auth";
 import { useQuery, useAxiosWithAuth, useRefreshToken } from "@/lib";
 
 export const HomePage = () => {
   const axiosWithAuth = useAxiosWithAuth();
-  const { signout } = useAuth();
+  const { removeAuth } = useAuth();
   const refresh = useRefreshToken();
 
   const { data, isLoading, error, isError, refetch } = useQuery({
@@ -35,7 +35,7 @@ export const HomePage = () => {
           <Button className="w-full" onClick={() => refetch()}>
             re request{" "}
           </Button>
-          <Button className="w-full" onClick={() => signout()}>
+          <Button className="w-full" onClick={() => removeAuth()}>
             Sign Out{" "}
           </Button>
           <Button
@@ -43,7 +43,7 @@ export const HomePage = () => {
             className="w-full"
             onClick={() => refresh()}
           >
-            refresh{" "}
+            refresh
           </Button>
         </CardFooter>
       </CardHeader>
