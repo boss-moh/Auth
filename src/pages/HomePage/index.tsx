@@ -5,25 +5,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { API_END_POINT, userType } from "@/constants";
+import { API_END_POINT, sessionType } from "@/constants";
 import { useAuth } from "@/context/Auth";
 import { useQuery, useAxiosWithAuth, useRefreshToken } from "@/lib";
 
 export const HomePage = () => {
   const axiosWithAuth = useAxiosWithAuth();
-  const refresh = useRefreshToken();
-  const {
-    data: response,
-    isLoading,
-    error,
-    isError,
-  } = useQuery({
-    queryKey: ["users"],
-    queryFn: async () => await axiosWithAuth.get(API_END_POINT.USERS),
-  });
   const { signout } = useAuth();
+  const refresh = useRefreshToken();
 
-  const userList: userType[] = response?.data ?? [];
+  const { data, isLoading, error, isError, refetch } = useQuery({
+    queryKey: ["users"],
+    queryFn: async () =>
+      await axiosWithAuth.get<null, sessionType>(API_END_POINT.USER_INFOS),
+  });
+
+  const userName = data?.username;
   return (
     <>
       <CardHeader>
@@ -31,15 +28,13 @@ export const HomePage = () => {
         <CardContent>
           {isLoading && "isLoading..."}
           {isError && error?.message}
-          <ul className="space-y-2">
-            {userList.map((user, index) => (
-              <li className="border border-gray-400" key={index}>
-                <p>{user.fullName}</p>
-              </li>
-            ))}
-          </ul>
+          <h2>userName : {userName}</h2>
+          <img src={data?.image} className="bg-gray-100 border rounded" />
         </CardContent>
         <CardFooter>
+          <Button className="w-full" onClick={() => refetch()}>
+            re request{" "}
+          </Button>
           <Button className="w-full" onClick={() => signout()}>
             Sign Out{" "}
           </Button>

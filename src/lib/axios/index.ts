@@ -1,4 +1,4 @@
-import { API_BASE_URL, API_END_POINT } from "@/constants";
+import { API_BASE_URL, API_END_POINT, tokensType } from "@/constants";
 import { useAuth } from "@/context/Auth";
 import {
   AxiosError,
@@ -41,8 +41,8 @@ export const useAxiosWithAuth = () => {
   useEffect(() => {
     const requestInterceptor = axiosAuth.interceptors.request.use(
       (config) => {
-        if (isItLogin) {
-          console.log("adding auth to request headers");
+        if (isItLogin && !config.headers["Authorization"]) {
+          console.log('request run ')
           config.headers["Authorization"] = `Bearer ${auth?.accessToken}`;
         }
         return config;
@@ -52,38 +52,37 @@ export const useAxiosWithAuth = () => {
 
     const responseIntecropter = axiosAuth.interceptors.response.use(
       (response) => {
-        // Any status code that lie within the range of 2xx cause this function to trigger
-        // Do something with response data
-
         return response.data;
       },
       async function (error: AxiosError) {
-        // Any status codes that falls outside the range of 2xx cause this function to trigger
-        // Do something with response error
-        if (error.status === 401) {
-          //handle new refersh token
-          const beforeRequest = error?.config as AxiosRequestConfig & {
-            weHaveTryBefore: boolean;
-          };
-          if (beforeRequest && !beforeRequest.weHaveTryBefore) {
-            console.log("handle new refersh token");
-            beforeRequest.weHaveTryBefore = true;
+        const originalRequest = error.config as AxiosRequestConfig & {
+          _retry?: boolean;
+        };
+
+        // Check if error is 401 and we haven't tried refreshing yet
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          try {
+            originalRequest._retry = true;
             const result = await refersh();
-
-            if (result !== null) {
+            
+            if (result) {
               updateRefersh(result.accessToken, result.refreshToken);
-
-              // beforeRequest?.headers?. =`Bearer ${result.accessToken}`
-              // beforeRequest.headers?.['Authorization'] = `Bearer ${newAccessToken}`;
-              // beforeRequest.headers?.Authorization= `Bearer ${result.accessToken}`
-              beforeRequest.headers = beforeRequest.headers || {}; // Ensure headers is defined
-              console.log("before Edit", beforeRequest.headers.Authorization);
-              beforeRequest.headers.Authorization = `Bearer ${result.accessToken}`;
-              console.log("after Edit", beforeRequest.headers.Authorization);
-              return await axiosAuth(beforeRequest);
+              
+              // Update the authorization header
+              originalRequest.headers = {
+                ...originalRequest.headers,
+                Authorization: `Bearer ${result.accessToken}`
+              };
+              
+              // Retry the original request with new token
+              return axiosAuth(originalRequest);
             }
+          } catch  {
+            // If refresh token fails, reject with original error
+            return Promise.reject(error.response?.data);
           }
         }
+
         return Promise.reject(error.response?.data);
       }
     );
@@ -91,29 +90,31 @@ export const useAxiosWithAuth = () => {
       axiosAuth.interceptors.request.eject(requestInterceptor);
       axiosAuth.interceptors.response.eject(responseIntecropter);
     };
-  }, [auth, refersh]);
+  }, [auth?.accessToken]);
 
   return axiosAuth;
 };
 
 export function useRefreshToken() {
   const { auth } = useAuth();
+  
   const refresh = async () => {
-    try {
-      console.log("refreshToken in refreshToken", auth?.refreshToken);
+    if (!auth?.refreshToken) {
+      throw new Error('No refresh token available');
+    }
 
-      const reposne = await axios.post(API_END_POINT.REFERSH, {
-        refreshToken: auth?.refreshToken,
-      });
+    try {
+      const response = await axios.post<null,tokensType>(
+        API_END_POINT.REFERSH,
+        { refreshToken: auth.refreshToken }
+      );
 
       return {
-        accessToken: reposne.data.accessToken,
-        refreshToken: reposne.data.refreshToken,
+        accessToken: response?.accessToken,
+        refreshToken: response.refreshToken,
       };
-    } catch (e) {
-      const error = e as Error;
-      console.log(error);
-      console.log("Error To fetch get Refersh ");
+    } catch (error) {
+      console.error('Failed to refresh token:', error);
       throw error;
     }
   };

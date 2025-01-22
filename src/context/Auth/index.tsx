@@ -2,6 +2,10 @@ import { childrenProps, sessionType, URL_LINKS } from "@/constants";
 import { CookiesProvider, useCookies } from "@/lib";
 import { useNavigate } from "react-router";
 
+type cookies = {
+  auth: sessionType | null;
+};
+
 export const AuthProdiver = ({ children }: childrenProps) => {
   return (
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
@@ -13,9 +17,7 @@ export const AuthProdiver = ({ children }: childrenProps) => {
 export const useAuth = () => {
   const [{ auth = null }, setCookies, removeCookies] = useCookies<
     "auth",
-    {
-      auth: sessionType | null;
-    }
+    cookies
   >(["auth"]);
   const navigate = useNavigate();
 
@@ -28,13 +30,6 @@ export const useAuth = () => {
     navigate(URL_LINKS.SIGN_IN);
   };
   const updateRefersh = (accessToken: string, refreshToken: string) => {
-    console.log("update refersh token in hook context", auth);
-    console.log(
-      "update refersh token in hook context",
-      accessToken,
-      "\n",
-      refreshToken
-    );
     setCookies("auth", { ...auth, accessToken, refreshToken });
   };
 

@@ -4,13 +4,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { HelperText } from "@/components";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { API_END_POINT, loginSchema, loginType, URL_LINKS } from "@/constants";
+import {
+  API_END_POINT,
+  loginSchema,
+  loginType,
+  URL_LINKS,
+  sessionType,
+} from "@/constants";
 import { Link } from "react-router";
 import { axios, useMutation } from "@/lib";
 import { useAuth } from "@/context/Auth";
@@ -37,10 +44,13 @@ export const SignInPage = () => {
   } = useMutation({
     mutationKey: ["sign In"],
     mutationFn: async () => {
-      return await axios.post(API_END_POINT.SIGN_IN, getValues());
+      return await axios.post<unknown, sessionType>(API_END_POINT.SIGN_IN, {
+        ...getValues(),
+        expiresInMins: 1,
+      });
     },
     onSuccess(response) {
-      signin(response.data);
+      signin(response);
     },
   });
 
@@ -58,18 +68,20 @@ export const SignInPage = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email" className="hover:cursor-pointer">
-              Email
+            <Label htmlFor="username" className="hover:cursor-pointer">
+              username
             </Label>
             <Input
-              id="email"
-              {...register("email")}
+              id="userName"
+              {...register("username")}
               type="text"
-              placeholder="Enter your email"
+              placeholder="Enter your username"
+              hasHelperText={!!errors?.username}
+              helperTextProps={{ children: errors.username?.message }}
             />
-            <p className="text-red-500">
-              {errors?.email && errors?.email?.message}
-            </p>
+            {/* <p className="text-red-500">
+              {errors?.username && errors?.username?.message}
+            </p> */}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password" className="hover:cursor-pointer">
@@ -79,10 +91,9 @@ export const SignInPage = () => {
               id="password"
               {...register("password")}
               placeholder="Enter your password"
+              hasHelperText={!!errors?.password}
+              helperTextProps={{ children: errors.password?.message }}
             />
-            <p className="text-red-500">
-              {errors?.password && errors?.password?.message}
-            </p>
           </div>
         </CardContent>
         <CardFooter>
