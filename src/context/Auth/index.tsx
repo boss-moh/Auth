@@ -7,7 +7,7 @@ type cookies = {
 
 export const AuthProdiver = ({ children }: childrenProps) => {
   return (
-    <CookiesProvider defaultSetOptions={{ path: "/" }}>
+    <CookiesProvider defaultSetOptions={{ path: "/", secure: true }}>
       {children}
     </CookiesProvider>
   );

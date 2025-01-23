@@ -6,7 +6,7 @@ import {
   AxiosResponse,
   default as axiosLibaray,
 } from "axios";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 const axios = axiosLibaray.create({
   baseURL: API_BASE_URL,
   // timeout: 1000,
@@ -36,6 +36,8 @@ const axiosAuth = axiosLibaray.create({
 });
 
 export const useAxiosWithAuth = () => {
+  const retryCount = useRef(0);
+
   const { auth, isItHasAuth, updateTokens } = useAuth();
   const refersh = useRefreshToken();
   useEffect(() => {
@@ -54,14 +56,12 @@ export const useAxiosWithAuth = () => {
         return response.data;
       },
       async function (error: AxiosError) {
-        const originalRequest = error.config as AxiosRequestConfig & {
-          _retry?: boolean;
-        };
+        const originalRequest = error.config as AxiosRequestConfig;
 
         // Check if error is 401 and we haven't tried refreshing yet
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && retryCount.current === 0) {
           try {
-            originalRequest._retry = true;
+            retryCount.current = 1;
             const result = await refersh();
 
             if (result) {
@@ -86,6 +86,7 @@ export const useAxiosWithAuth = () => {
       }
     );
     return () => {
+      retryCount.current = 0;
       axiosAuth.interceptors.request.eject(requestInterceptor);
       axiosAuth.interceptors.response.eject(responseIntecropter);
     };
