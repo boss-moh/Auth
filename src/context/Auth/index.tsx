@@ -1,4 +1,4 @@
-import { childrenProps, sessionType } from "@/constants";
+import { childrenProps, sessionType, tokensType } from "@/constants";
 import { CookiesProvider, useCookies } from "@/lib";
 
 type cookies = {
@@ -25,17 +25,21 @@ export const useAuth = () => {
   const removeAuth = () => {
     removeCookies("auth");
   };
-  const updateTokens = (accessToken: string, refreshToken: string) => {
-    setCookies("auth", { ...auth, accessToken, refreshToken });
+  const updateTokens = (tokens: tokensType) => {
+    setCookies("auth", { ...auth, ...tokens });
+  };
+  const getUser = () => {
+    return auth?.user || null;
   };
 
-  const isItHasAuth = auth !== null;
+  const hasAuth = auth !== null;
 
   return {
     auth,
     setAuth,
     removeAuth,
-    isItHasAuth,
+    hasAuth,
     updateTokens,
+    getUser,
   };
 };

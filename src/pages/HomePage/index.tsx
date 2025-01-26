@@ -1,51 +1,31 @@
-import {
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Button,
-} from "@/components";
-import { API_END_POINT, sessionType } from "@/constants";
-import { useAuth } from "@/context/Auth";
-import { useQuery, useAxiosWithAuth, useRefreshToken } from "@/lib";
+import { buttonVariants, Card, CardHeader, CardTitle } from "@/components";
+import { MENU_LINKS } from "@/constants";
+import { cn } from "@/lib/utils";
+import { Link } from "react-router";
 
 export const HomePage = () => {
-  const axiosWithAuth = useAxiosWithAuth();
-  const { removeAuth } = useAuth();
-  const refresh = useRefreshToken();
-
-  const { data, isLoading, error, isError, refetch } = useQuery({
-    queryKey: ["users"],
-    queryFn: async () =>
-      await axiosWithAuth.get<null, sessionType>(API_END_POINT.USER_INFOS),
-  });
-
-  const userName = data?.username;
   return (
     <>
       <CardHeader>
-        <CardTitle className="text-center">HomePage</CardTitle>
-        <CardContent>
-          {isLoading && "isLoading..."}
-          {isError && error?.message}
-          <h2>userName : {userName}</h2>
-          <img src={data?.image} className="bg-gray-100 border rounded" />
-        </CardContent>
-        <CardFooter>
-          <Button className="w-full" onClick={() => refetch()}>
-            re request{" "}
-          </Button>
-          <Button className="w-full" onClick={() => removeAuth()}>
-            Sign Out{" "}
-          </Button>
-          <Button
-            variant={"outline"}
-            className="w-full"
-            onClick={() => refresh()}
-          >
-            refresh
-          </Button>
-        </CardFooter>
+        <CardTitle className="text-center">Home Page</CardTitle>
+        <div>
+          <ul className="flex flex-col gap-2">
+            {MENU_LINKS.map((linkItem) => (
+              <Card key={linkItem.text} className="p-2">
+                <li className="space-y-0.5">
+                  <h3 className="font-medium uppercase ">{linkItem.text}</h3>
+                  <p className="capitalize">{linkItem.description}</p>
+                  <Link
+                    to={linkItem.to}
+                    className={cn(buttonVariants({ size: "sm" }), "capitalize")}
+                  >
+                    Go To {linkItem.text}
+                  </Link>
+                </li>
+              </Card>
+            ))}
+          </ul>
+        </div>
       </CardHeader>
     </>
   );

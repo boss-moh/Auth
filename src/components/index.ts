@@ -5,3 +5,4 @@ export * from "./ui/input";
 export * from "./ui/label";
 export * from "./ui/toast";
 export * from "./ui/toaster";
+export * from "./MenuLinks";

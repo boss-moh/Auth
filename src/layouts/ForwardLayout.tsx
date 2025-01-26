@@ -3,9 +3,9 @@ import { useAuth } from "@/context/Auth";
 import { Navigate, Outlet } from "react-router";
 
 export const ForwardLayout = () => {
-  const { isItHasAuth } = useAuth();
+  const { hasAuth } = useAuth();
 
-  if (isItHasAuth) return <Navigate to={URL_LINKS.HOME} />;
+  if (hasAuth) return <Navigate to={URL_LINKS.HOME} />;
   return <Outlet />;
 };
 

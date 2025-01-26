@@ -7,7 +7,7 @@ const RULES = {
 };
 
 export const loginSchema = z.object({
-  username: RULES.userName,
+  email: RULES.email,
   password: RULES.password,
 });
 

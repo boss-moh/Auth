@@ -1,9 +1,16 @@
 import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router";
-import { SignInPage, HomePage } from "@/pages";
+import {
+  SignInPage,
+  HomePage,
+  SignUpPage,
+  UserPage,
+  AdminPage,
+  UnauthorizedPage,
+  NotFound,
+} from "@/pages";
 import { CardLayout, ProtectedLayout } from "@/layouts";
-import { URL_LINKS } from "@/constants";
-import ForwardLayout from "./layouts/ForwardLayout";
+import { ROLES, URL_LINKS } from "@/constants";
 
 export function ScrollToTop() {
   const { pathname } = useLocation();
@@ -21,13 +28,22 @@ export default function App() {
       <ScrollToTop />
       <Routes>
         <Route element={<CardLayout />}>
-          <Route element={<ProtectedLayout />}>
-            <Route path={URL_LINKS.HOME} element={<HomePage />} />
+          {/* <Route element={<ForwardLayout />}> */}
+          {/* </Route> */}
+          <Route path={URL_LINKS.HOME} element={<HomePage />} />
+          <Route path={URL_LINKS.SIGN_UP} element={<SignUpPage />} />
+          <Route path={URL_LINKS.SIGN_IN} element={<SignInPage />} />
+          <Route path={URL_LINKS.UNAUTHORIZED} element={<UnauthorizedPage />} />
+          <Route path={URL_LINKS.NOT_FOUND} element={<NotFound />} />
+          <Route
+            element={<ProtectedLayout whoCanSee={[ROLES.USER, ROLES.ADMIN]} />}
+          >
+            <Route path={URL_LINKS.USER} element={<UserPage />} />
           </Route>
-          <Route element={<ForwardLayout />}>
-            <Route path={URL_LINKS.SIGN_IN} element={<SignInPage />} />
+
+          <Route element={<ProtectedLayout whoCanSee={[ROLES.ADMIN]} />}>
+            <Route path={URL_LINKS.ADMIN} element={<AdminPage />} />
           </Route>
-          {/* <Route path={URL_LINKS.SIGN_UP} element={<SignUpPage />} /> */}
         </Route>
       </Routes>
     </div>

@@ -18,8 +18,7 @@ axios.interceptors.response.use(
   (response) => {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
-
-    return response.data;
+    return response.data?.data;
   },
   function (error: AxiosError) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
@@ -38,12 +37,12 @@ const axiosAuth = axiosLibaray.create({
 export const useAxiosWithAuth = () => {
   const retryCount = useRef(0);
 
-  const { auth, isItHasAuth, updateTokens } = useAuth();
+  const { auth, hasAuth, updateTokens } = useAuth();
   const refersh = useRefreshToken();
   useEffect(() => {
     const requestInterceptor = axiosAuth.interceptors.request.use(
       (config) => {
-        if (isItHasAuth && !config.headers["Authorization"]) {
+        if (hasAuth && !config.headers["Authorization"]) {
           config.headers["Authorization"] = `Bearer ${auth?.accessToken}`;
         }
         return config;
@@ -53,7 +52,7 @@ export const useAxiosWithAuth = () => {
 
     const responseIntecropter = axiosAuth.interceptors.response.use(
       (response) => {
-        return response.data;
+        return response.data?.data;
       },
       async function (error: AxiosError) {
         const originalRequest = error.config as AxiosRequestConfig;
@@ -65,7 +64,7 @@ export const useAxiosWithAuth = () => {
             const result = await refersh();
 
             if (result) {
-              updateTokens(result.accessToken, result.refreshToken);
+              updateTokens(result);
 
               // Update the authorization header
               originalRequest.headers = {
@@ -90,7 +89,7 @@ export const useAxiosWithAuth = () => {
       axiosAuth.interceptors.request.eject(requestInterceptor);
       axiosAuth.interceptors.response.eject(responseIntecropter);
     };
-  }, [auth?.accessToken]);
+  }, [auth]);
 
   return axiosAuth;
 };

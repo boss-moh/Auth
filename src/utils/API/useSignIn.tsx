@@ -3,17 +3,20 @@ import {
   loginSchema,
   loginType,
   sessionType,
+  URL_LINKS,
 } from "@/constants";
 import { useAuth } from "@/context";
-import { axios, useForm, zodResolver } from "@/lib";
-import { useMutation } from "@tanstack/react-query";
+import { axios, useForm, useMutation, zodResolver } from "@/lib";
+import { useLocation, useNavigate } from "react-router";
 
-const useSignInForm = () => {
+export const useSignIn = () => {
   const { setAuth } = useAuth();
-
+  const navigate = useNavigate();
+  const location = useLocation();
+  const form = location.state?.from || URL_LINKS.HOME;
   const {
     register,
-    formState: { errors },
+    formState: { errors: formErrors },
     handleSubmit,
     getValues,
   } = useForm<loginType>({
@@ -24,17 +27,16 @@ const useSignInForm = () => {
     isPending,
     mutateAsync: mutate,
     isError,
-    error,
-  } = useMutation({
+    error: requestError,
+  } = useMutation<sessionType>({
     mutationKey: ["sign In"],
     mutationFn: async () => {
-      return await axios.post<unknown, sessionType>(API_END_POINT.SIGN_IN, {
-        ...getValues(),
-        expiresInMins: 1,
-      });
+      return await axios.post(API_END_POINT.SIGN_IN, getValues());
     },
     onSuccess(response) {
       setAuth(response);
+      console.log("form", form);
+      navigate(form);
     },
   });
 
@@ -45,12 +47,12 @@ const useSignInForm = () => {
 
   return {
     register,
-    errors,
     isError,
     isPending,
-    error,
+    formErrors,
+    requestError,
     onSubmit: handleSubmit(onSubmit),
   };
 };
 
-export default useSignInForm;
+export default useSignIn;

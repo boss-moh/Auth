@@ -10,13 +10,12 @@ import {
 } from "@/components";
 
 import { URL_LINKS } from "@/constants";
+import { useSignIn } from "@/utils";
 import { Link } from "react-router";
-import useSignInForm from "./useSignInForm";
 
 export const SignInPage = () => {
-  const { onSubmit, register, error, errors, isError, isPending } =
-    useSignInForm();
-
+  const { register, formErrors, isError, requestError, onSubmit, isPending } =
+    useSignIn();
   return (
     <>
       <CardHeader>
@@ -27,17 +26,17 @@ export const SignInPage = () => {
       <form onSubmit={onSubmit}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="username" className="hover:cursor-pointer">
-              User Name
+            <Label htmlFor="email" className="hover:cursor-pointer">
+              Email
             </Label>
             <Input
-              id="username"
-              {...register("username")}
+              id="email"
+              {...register("email")}
               type="text"
-              placeholder="Enter your username"
-              aria-invalid={!!errors?.username}
-              hasHelperText={!!errors?.username}
-              helperTextProps={{ children: errors.username?.message }}
+              placeholder="Enter your email"
+              aria-invalid={!!formErrors?.email}
+              hasHelperText={!!formErrors?.email}
+              helperTextProps={{ children: formErrors.email?.message }}
               required
             />
           </div>
@@ -49,9 +48,9 @@ export const SignInPage = () => {
               id="password"
               {...register("password")}
               placeholder="Enter your password"
-              aria-invalid={!!errors?.password}
-              hasHelperText={!!errors?.password}
-              helperTextProps={{ children: errors.password?.message }}
+              aria-invalid={!!formErrors?.password}
+              hasHelperText={!!formErrors?.password}
+              helperTextProps={{ children: formErrors.password?.message }}
               required
             />
           </div>
@@ -62,7 +61,7 @@ export const SignInPage = () => {
               {isPending ? "Loading ... " : "Sign In"}
             </Button>
 
-            {isError && <HelperText>{error?.message}</HelperText>}
+            {isError && <HelperText>{requestError?.message}</HelperText>}
 
             <div>
               <p className="text-sm text-gray-600">"Don't have an account?" </p>
