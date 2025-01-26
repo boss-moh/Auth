@@ -14,8 +14,10 @@ export const HomePage = () => {
                 <li className="space-y-0.5">
                   <h3 className="font-medium uppercase ">{linkItem.text}</h3>
                   <p className="capitalize">{linkItem.description}</p>
-                  <Button asChild size={"sm"} className="capitalize">
-                    <Link to={linkItem.to}>Go To {linkItem.text}</Link>
+                  <Button size={"none"} className="capitalize">
+                    <Link className="p-2" to={linkItem.to}>
+                      Go To {linkItem.text}
+                    </Link>
                   </Button>
                 </li>
               </Card>

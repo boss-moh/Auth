@@ -10,8 +10,13 @@ import { useEffect, useRef } from "react";
 const axios = axiosLibaray.create({
   baseURL: API_BASE_URL,
   // timeout: 1000,
-  headers: { "X-Custom-Header": "foobar" },
+  headers: { "X-Custom-Header": "foobar" ,
+    
+  "Accept-Language": "en-US,en;"
+  },
   // withCredentials: true,
+
+
 });
 
 axios.interceptors.response.use(
@@ -30,7 +35,10 @@ axios.interceptors.response.use(
 const axiosAuth = axiosLibaray.create({
   baseURL: API_BASE_URL,
   // timeout: 1000,
-  headers: { "X-Custom-Header": "foobar" },
+  headers: { "X-Custom-Header": "foobar" ,
+    "Accept-Language": "en-US,en;"
+
+  },
   // withCredentials: true,
 });
 

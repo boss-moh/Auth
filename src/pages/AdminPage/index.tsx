@@ -20,10 +20,11 @@ export const AdminPage = () => {
     error,
     isError,
     data: users,
-    isPending,
+    isFetching,
   } = useQuery<userType[]>({
     queryKey: ["users"],
     queryFn: async () => axiosWithAuth.get(API_END_POINT.USERS),
+    staleTime: 0,
   });
   return (
     <div className="flex flex-col justify-between h-full">
@@ -39,6 +40,8 @@ export const AdminPage = () => {
             <header>
               <h3>Users Lists</h3>
             </header>
+            {isFetching && <p>Loading ...</p>}
+
             <article className="flex flex-col gap-2 ">
               {users?.map((user) => (
                 <Card key={user._id} className="p-1">
@@ -49,10 +52,7 @@ export const AdminPage = () => {
               ))}
             </article>
           </section>
-          <div>
-            {isPending && <p>Loading ...</p>}
-            {isError && <HelperText>{error.message}</HelperText>}
-          </div>
+          <div>{isError && <HelperText>{error.message}</HelperText>}</div>
         </CardContent>
         <CardFooter>
           <Button className="w-full" onClick={() => removeAuth()}>
