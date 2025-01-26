@@ -1,64 +1,29 @@
 import {
-  Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+  Input,
+  Button,
+  Label,
+  HelperText,
+} from "@/components";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { API_END_POINT, loginSchema, loginType, URL_LINKS } from "@/constants";
+import { URL_LINKS } from "@/constants";
+import { useSignIn } from "@/utils";
 import { Link } from "react-router";
-import { axios, useMutation } from "@/lib";
-import { useAuth } from "@/context/Auth";
-import useForward from "@/hooks/useForward";
 
 export const SignInPage = () => {
-  useForward();
-  const { signin } = useAuth();
-
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    getValues,
-  } = useForm<loginType>({
-    resolver: zodResolver(loginSchema),
-  });
-
-  const {
-    isPending,
-    mutateAsync: mutate,
-    isError,
-    error,
-  } = useMutation({
-    mutationKey: ["sign In"],
-    mutationFn: async () => {
-      return await axios.post(API_END_POINT.SIGN_IN, getValues());
-    },
-    onSuccess(response) {
-      signin(response.data);
-    },
-  });
-
-  const onSubmit = async () => {
-    if (isPending) return;
-    mutate();
-  };
-
-  // className="relative max-w-sm -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+  const { register, formErrors, isError, requestError, onSubmit, isPending } =
+    useSignIn();
   return (
-    <Card>
+    <>
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-center">
           Sign In
         </CardTitle>
       </CardHeader>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={onSubmit}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email" className="hover:cursor-pointer">
@@ -69,10 +34,11 @@ export const SignInPage = () => {
               {...register("email")}
               type="text"
               placeholder="Enter your email"
+              aria-invalid={!!formErrors?.email}
+              hasHelperText={!!formErrors?.email}
+              helperTextProps={{ children: formErrors.email?.message }}
+              required
             />
-            <p className="text-red-500">
-              {errors?.email && errors?.email?.message}
-            </p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="password" className="hover:cursor-pointer">
@@ -82,10 +48,11 @@ export const SignInPage = () => {
               id="password"
               {...register("password")}
               placeholder="Enter your password"
+              aria-invalid={!!formErrors?.password}
+              hasHelperText={!!formErrors?.password}
+              helperTextProps={{ children: formErrors.password?.message }}
+              required
             />
-            <p className="text-red-500">
-              {errors?.password && errors?.password?.message}
-            </p>
           </div>
         </CardContent>
         <CardFooter>
@@ -93,7 +60,9 @@ export const SignInPage = () => {
             <Button type="submit" className="w-full" disabled={isPending}>
               {isPending ? "Loading ... " : "Sign In"}
             </Button>
-            {isError && <p className="text-red-500">{error.message}</p>}
+
+            {isError && <HelperText>{requestError?.message}</HelperText>}
+
             <div>
               <p className="text-sm text-gray-600">"Don't have an account?" </p>
               <Link to={URL_LINKS.SIGN_UP} className="font-bold ">
@@ -103,7 +72,7 @@ export const SignInPage = () => {
           </div>
         </CardFooter>
       </form>
-    </Card>
+    </>
   );
 };
 

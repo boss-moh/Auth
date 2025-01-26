@@ -5,18 +5,32 @@ export type childrenProps = { children: ChildrenType };
 export type svgProps = ComponentProps<"svg">;
 export type divProps = ComponentProps<"div">;
 
-export type sessionType = {
+export type sessionType = tokensType & { user: userType };
+
+export type tokensType = {
   accessToken: string;
   refreshToken: string;
-  user: userType;
 };
-
 export type userType = {
   _id: string;
   fullName: string;
   userName: string;
   email: string;
   image: string;
-  status: string;
-  role: string;
+  role: RoleType;
 };
+
+export type API_RESPONSE<T> = {
+  status: string;
+  code: number;
+  data: T;
+  message: string;
+};
+
+
+export const ROLES ={
+  USER:"user",
+  ADMIN:"admin",
+  ALL:"all"
+} as const
+export type RoleType = typeof ROLES[keyof typeof ROLES]  // type will be "user" | "admin"

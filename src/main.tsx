@@ -1,24 +1,22 @@
-import "./index.css";
-// import { StrictMode } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 
 import { ReactQueryLib } from "@/lib";
+import { AuthProdiver } from "@/context";
+import { Toaster } from "@/components";
 import App from "./App";
-import { AuthProdiver } from "./context/Auth";
-import { Toaster } from "./components/ui/toaster";
+import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
-  <ReactQueryLib>
-    <BrowserRouter>
-      <AuthProdiver>
-        <App />
-        <Toaster />
-      </AuthProdiver>
-    </BrowserRouter>
-  </ReactQueryLib>
+  <StrictMode>
+    <ReactQueryLib>
+      <BrowserRouter>
+        <AuthProdiver>
+          <App />
+          <Toaster />
+        </AuthProdiver>
+      </BrowserRouter>
+    </ReactQueryLib>
+  </StrictMode>
 );
-{
-  /* <StrictMode>
-</StrictMode> */
-}
