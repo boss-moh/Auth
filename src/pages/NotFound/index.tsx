@@ -20,7 +20,7 @@ export function NotFound() {
         <HelperText>
           Error 404: The page you're looking for doesn't exist.
         </HelperText>
-        <p className="text-center text-gray-600">
+        <p className="text-center text-gray-600 ">
           The page you're trying to access may have been moved, deleted, or
           never existed.
         </p>

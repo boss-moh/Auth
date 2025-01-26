@@ -1,6 +1,5 @@
-import { buttonVariants, Card, CardHeader, CardTitle } from "@/components";
+import { Button, Card, CardHeader, CardTitle } from "@/components";
 import { MENU_LINKS } from "@/constants";
-import { cn } from "@/lib/utils";
 import { Link } from "react-router";
 
 export const HomePage = () => {
@@ -15,12 +14,9 @@ export const HomePage = () => {
                 <li className="space-y-0.5">
                   <h3 className="font-medium uppercase ">{linkItem.text}</h3>
                   <p className="capitalize">{linkItem.description}</p>
-                  <Link
-                    to={linkItem.to}
-                    className={cn(buttonVariants({ size: "sm" }), "capitalize")}
-                  >
-                    Go To {linkItem.text}
-                  </Link>
+                  <Button asChild size={"sm"} className="capitalize">
+                    <Link to={linkItem.to}>Go To {linkItem.text}</Link>
+                  </Button>
                 </li>
               </Card>
             ))}

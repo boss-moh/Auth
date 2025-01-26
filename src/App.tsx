@@ -30,11 +30,13 @@ export default function App() {
         <Route element={<CardLayout />}>
           {/* <Route element={<ForwardLayout />}> */}
           {/* </Route> */}
+
           <Route path={URL_LINKS.HOME} element={<HomePage />} />
           <Route path={URL_LINKS.SIGN_UP} element={<SignUpPage />} />
           <Route path={URL_LINKS.SIGN_IN} element={<SignInPage />} />
           <Route path={URL_LINKS.UNAUTHORIZED} element={<UnauthorizedPage />} />
           <Route path={URL_LINKS.NOT_FOUND} element={<NotFound />} />
+
           <Route
             element={<ProtectedLayout whoCanSee={[ROLES.USER, ROLES.ADMIN]} />}
           >
